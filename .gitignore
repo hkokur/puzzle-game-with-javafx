@@ -27,3 +27,7 @@ myToken.txt
 
 #vscode
 .vscode/
+
+# Folders
+bin/
+lib/
