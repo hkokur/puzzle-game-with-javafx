@@ -1,17 +1,18 @@
 
-public  class Blocks {
+public class Block {
 	
 	private String type;
 	private byte position;
 	private String img;
 	private boolean movable;
 	private String property;
-	
-	Blocks(byte position, String type, String property) {
+		
+	Block(byte position, String type, String property) {
 		this.position = position;
 		this.type = type;
 		this.property = property;
 		settingMovable();
+		setImg();
 	}
 	
 	public void settingMovable() {
@@ -36,8 +37,13 @@ public  class Blocks {
 		return img;
 	}
 	
-	public void setImg(String img) {
-		this.img = img;
+	// setting images automaticly by type and property
+	public void setImg() {
+		Character ch = Character.toLowerCase(type.charAt(0));
+		type = type.replace(type.charAt(0), ch);
+		if ( !((type+property).equals("emptynone"))){
+			img = "images/" + type + property +".png";
+		}	
 	}
 
 	public boolean isMovable() {
