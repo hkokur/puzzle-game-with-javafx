@@ -9,7 +9,7 @@ public class Starter extends Blocks {
 		super.setPosition(position);
 	}
 	
-	//img klasörü
+	//img folder
 	public void setImg() {
 		if(isVertical) {
 			super.setImg("verticalStarter.png");

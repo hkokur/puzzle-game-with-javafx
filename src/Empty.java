@@ -3,7 +3,7 @@ public class Empty extends Blocks {
 	final private boolean isStatic = false;
 	
 	
-	Empty(boolean isVerticel, byte position) {
+	Empty(byte position) {
 		super.setPosition(position);
 	}
 	
