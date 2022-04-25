@@ -21,27 +21,11 @@ public class Main extends Application{
     @Override
     public void start(Stage primaryStage){
         GridPane gpane = new GridPane();
-
-        // Creating image nodes
-        ImageView emptyNone = new ImageView("images/emptyNone.png");
-        // ImageView endHorizontal = new ImageView("images/endHorizontal.png");
-        // ImageView endVertical = new ImageView("images/endVertical.png");
-        // ImageView pipe00 = new ImageView("images/pipe00.png");
-        // ImageView pipe01 = new ImageView("images/pipe01.png");
-        // ImageView pipe10 = new ImageView("images/pipe10.png");
-        // ImageView pipe11 = new ImageView("images/pipe11.png");
-
-
- 
-        Text msg = new Text("Hello World");
-
         gpane.setGridLinesVisible(true); // make grid lines visible
-        Scene scene = new Scene(gpane, 400, 310);
-        primaryStage.setScene(scene);
+        gpane.setVgap(5);
+        gpane.setHgap(5);
+        gpane.setStyle(" -fx-background-color: black;");
 
-        primaryStage.setTitle("this is a title");
-        primaryStage.show();
-        
         // creating arrayList from text file. 
         ArrayList<Block> blocks;
         try {
@@ -51,9 +35,22 @@ public class Main extends Application{
             System.out.print(e.toString());
             blocks = new ArrayList<>();
         }
-        for(int i = 0; i < blocks.size();i++){
-            System.out.println(blocks.get(i).getPosition() + blocks.get(i).getType() + blocks.get(i).getImg());
+
+        // adding image nodes to gpane by position property
+        for(int i = 0; i < blocks.size(); i++){
+            Block block = blocks.get(i);
+            if(block.getImg() != null){
+                ImageView image = new ImageView(block.getImg());
+                gpane.add(image, block.getColumn(), block.getRow());
+            }
+
         }
+
+        Scene scene = new Scene(gpane, 400, 310);
+        primaryStage.setScene(scene);
+
+        primaryStage.setTitle("this is a title");
+        primaryStage.show();
         
     }
 
@@ -64,13 +61,17 @@ public class Main extends Application{
         java.io.File file= new java.io.File("src/levels/level"+level +".txt");
         Scanner input = new Scanner(file);
 
-        // creating objects according to level file and add it to arrayList
+        // creating objects according to level(contains 16(4x4) blocks) file and add it to arrayList
         int count = 1;
         while(input.hasNextLine()){
             String line = input.nextLine();
             if(line.startsWith("" + count++)){
                 String[] properties = line.split(",");
-                Block newBlock = new Block(Byte.parseByte(properties[0]),properties[1],properties[2]);
+                int number = Integer.parseInt(properties[0]);
+                int row = (int)(number/4.0-0.1);
+                int col = (number%4 != 0) ? number%4-1 : 3;
+                int[] position = {col,row};
+                Block newBlock = new Block(position,properties[1],properties[2]);
                 arrayList.add(newBlock);
             }
         } 

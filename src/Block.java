@@ -2,12 +2,13 @@
 public class Block {
 	
 	private String type;
-	private byte position;
+	// collumn,row
+	private int[] position = new int[2];
 	private String img;
 	private boolean movable;
 	private String property;
 		
-	Block(byte position, String type, String property) {
+	Block(int[] position, String type, String property) {
 		this.position = position;
 		this.type = type;
 		this.property = property;
@@ -25,14 +26,6 @@ public class Block {
 		return type;
 	}
 
-	public byte getPosition() {
-		return position;
-	}
-
-	public void setPosition(byte position) {
-		this.position = position;
-	}
-
 	public String getImg() {
 		return img;
 	}
@@ -41,7 +34,10 @@ public class Block {
 	public void setImg() {
 		Character ch = Character.toLowerCase(type.charAt(0));
 		type = type.replace(type.charAt(0), ch);
-		if ( !((type+property).equals("emptynone"))){
+		Character ch2 = Character.toUpperCase(property.charAt(0));
+		property = property.replaceFirst(Character.toString(property.charAt(0)), Character.toString(ch2));
+
+		if ( !((type+property).equals("emptyFree"))){
 			img = "images/" + type + property +".png";
 		}	
 	}
@@ -52,6 +48,14 @@ public class Block {
 
 	public String getProperty() {
 		return property;
+	}
+
+	public int getColumn(){
+		return position[0];
+	}
+
+	public int getRow(){
+		return position[1];
 	}
 
 	
