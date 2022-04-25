@@ -2,15 +2,24 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
 import javafx.application.Application;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import java.util.Scanner;
+import javax.swing.text.Position;
+
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+import java.io.File;
 
 public class Main extends Application{
+
 
     public static void main(String[] args) {
         // Launch the JavaFX application
@@ -19,12 +28,52 @@ public class Main extends Application{
 
 
     @Override
-    public void start(Stage primaryStage){
+    public void start(Stage stage) {
+		
+		StackPane startPane = new StackPane();
+		
+		
+		ImageView startgif = new ImageView(new Image("background/btngif.gif"));
+		
+		startgif.fitHeightProperty().bind(startPane.heightProperty());
+    	startgif.fitWidthProperty().bind(startPane.widthProperty());
+    	
+    	String musicFile= "src/music/music.mp3";
+    	Media music = new Media(new File(musicFile).toURI().toString());
+    	MediaPlayer mediaPlayer = new MediaPlayer(music);
+    	mediaPlayer.play();
+    	mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
+        mediaPlayer.seek(Duration.ZERO);
+
+		startPane.setOnMouseClicked(e ->  {
+			game(stage);
+		});
+
+        stage.setOnCloseRequest(windowEvent -> {
+            mediaPlayer.stop();
+        });
+		
+		startPane.getChildren().add(startgif);
+		
+		Scene scene = new Scene(startPane,1000,562);
+		stage.setTitle("start");
+		stage.setScene(scene);
+		stage.show();
+	}
+
+
+    
+    public void game(Stage primaryStage){
+
         GridPane gpane = new GridPane();
         gpane.setGridLinesVisible(true); // make grid lines visible
         gpane.setVgap(5);
         gpane.setHgap(5);
-        gpane.setStyle(" -fx-background-color: black;");
+
+        gpane.setAlignment(Pos.CENTER);
+        
+        gpane.setStyle("-fx-background-image: url('background/background.jpg')");
+    
 
         // creating arrayList from text file. 
         ArrayList<Block> blocks;
@@ -46,7 +95,7 @@ public class Main extends Application{
 
         }
 
-        Scene scene = new Scene(gpane, 400, 310);
+        Scene scene = new Scene(gpane,1920,1080);
         primaryStage.setScene(scene);
 
         primaryStage.setTitle("this is a title");
@@ -78,7 +127,4 @@ public class Main extends Application{
 
         return arrayList;
     }
-
-
-
 }
