@@ -23,20 +23,18 @@ import javafx.scene.media.MediaPlayer;
 import java.io.File;
 
 public class Main extends Application{
-
+    // class to manage levels and drag events
+    private Management management = new Management();
 
     public static void main(String[] args) {
         // Launch the JavaFX application
         Application.launch(args);
     }
 
-
     @Override
     public void start(Stage stage) {
 		
 		StackPane startPane = new StackPane();
-		
-		
 		ImageView startgif = new ImageView(new Image("background/btngif.gif"));
 		
 		startgif.fitHeightProperty().bind(startPane.heightProperty());
@@ -49,10 +47,10 @@ public class Main extends Application{
     	mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
         mediaPlayer.seek(Duration.ZERO);
 
-        // set level
-        int level = 1;
+
 		startPane.setOnMouseClicked(e ->  {
-			game(stage,level);
+            management.prime();
+            game(stage);
 		});
 
         stage.setOnCloseRequest(windowEvent -> {
@@ -60,16 +58,15 @@ public class Main extends Application{
         });
 		
 		startPane.getChildren().add(startgif);
-		
+
 		Scene scene = new Scene(startPane,1000,562);
 		stage.setTitle("start");
 		stage.setScene(scene);
 		stage.show();
 	}
 
-
-    
-    public void game(Stage primaryStage,int level){
+    public void game(Stage primaryStage){
+        ArrayList<Block> blocks = management.getBlocks();
 
         GridPane gpane = new GridPane();
         // make grid lines visible
@@ -82,70 +79,29 @@ public class Main extends Application{
         
         gpane.setStyle("-fx-background-image: url('background/background.jpg')");
     
-
-        // creating arrayList from text file. 
-        ArrayList<Block> blocks;
-        try {
-            blocks =  readFile(level);
-
-        } catch (Exception e) {
-            System.out.print(e.toString());
-            blocks = new ArrayList<>();
-        }
-
-        // create event handler
-        
-
         // add image nodes to gpane by position property
         for(int i = 0; i < blocks.size(); i++){
             Block block = blocks.get(i);
-            if(block.getImg() != null){
-                ImageView image = new ImageView(block.getImg());
-                image.setOnDragDetected(new EventHandler<MouseEvent>(){
-                    public void handle(MouseEvent e){
-                        System.out.println(image.getImage().getUrl());
+            ImageView image = new ImageView(block.getImg());
+            image.setOnDragDetected(new EventHandler<MouseEvent>(){
+                public void handle(MouseEvent e){
+                    management.setFirstBlock(block);            
+                }
+            });
+            image.setOnMouseEntered(new EventHandler<MouseEvent>(){
+                public void handle(MouseEvent e){
+                    if (management.getFirstBlock() != null){
+                        management.setSecondBlock(block);
+                        if (management.switchBlocks())
+                            game(primaryStage);
                     }
-                });
-                image.setOnMouseEntered(new EventHandler<MouseEvent>(){
-                    public void handle(MouseEvent e){
-                        System.out.println(image.getImage().getUrl());
-                    }
-                });
-                gpane.add(image, block.getColumn(), block.getRow());
-            }
+                }
+            });
+            gpane.add(image, block.getColumn(), block.getRow());
         }
-
-        System.out.println(gpane.getChildren().get(1));
         Scene scene = new Scene(gpane);
         primaryStage.setScene(scene);
-
         primaryStage.setTitle("this is a title");
-        primaryStage.show();
-        
-    }
-
-    public ArrayList<Block> readFile(int level) throws FileNotFoundException{
-        ArrayList<Block> arrayList= new ArrayList<>();
-        
-        // reading file
-        File file= new File("src/levels/level"+level +".txt");
-        Scanner input = new Scanner(file);
-
-        // creating objects according to level(contains 16(4x4) blocks) file and add it to arrayList
-        int count = 1;
-        while(input.hasNextLine()){
-            String line = input.nextLine();
-            if(line.startsWith("" + count++)){
-                String[] properties = line.split(",");
-                int number = Integer.parseInt(properties[0]);
-                int row = (int)(number/4.0-0.1);
-                int col = (number%4 != 0) ? number%4-1 : 3;
-                int[] position = {col,row};
-                Block newBlock = new Block(position,properties[1],properties[2]);
-                arrayList.add(newBlock);
-            }
-        } 
-
-        return arrayList;
+        primaryStage.show(); 
     }
 }

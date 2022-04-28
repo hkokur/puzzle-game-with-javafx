@@ -31,3 +31,4 @@ myToken.txt
 # Folders
 bin/
 bin/*/
+src/backup/*

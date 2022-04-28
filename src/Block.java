@@ -30,16 +30,13 @@ public class Block {
 		return img;
 	}
 	
-	// setting images automaticly by type and property
+	// setting images automatically by type and property
 	public void setImg() {
 		Character ch = Character.toLowerCase(type.charAt(0));
 		type = type.replace(type.charAt(0), ch);
 		Character ch2 = Character.toUpperCase(property.charAt(0));
 		property = property.replaceFirst(Character.toString(property.charAt(0)), Character.toString(ch2));
-
-		if ( !((type+property).equals("emptyFree"))){
-			img = "images/" + type + property +".png";
-		}	
+		img = "images/" + type + property +".png";	
 	}
 
 	public boolean isMovable() {
@@ -58,8 +55,11 @@ public class Block {
 		return position[1];
 	}
 
-	
-	
-	
-	
+	public void setColumn(int column){
+		this.position[0] = column;
+	}
+
+	public void setRow(int row){
+		this.position[1] = row;
+	}	
 }
