@@ -2,10 +2,14 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
 import javafx.application.Application;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.DragEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
@@ -45,8 +49,10 @@ public class Main extends Application{
     	mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
         mediaPlayer.seek(Duration.ZERO);
 
+        // set level
+        int level = 1;
 		startPane.setOnMouseClicked(e ->  {
-			game(stage);
+			game(stage,level);
 		});
 
         stage.setOnCloseRequest(windowEvent -> {
@@ -63,11 +69,13 @@ public class Main extends Application{
 
 
     
-    public void game(Stage primaryStage){
+    public void game(Stage primaryStage,int level){
 
         GridPane gpane = new GridPane();
-        gpane.setGridLinesVisible(true); // make grid lines visible
-        gpane.setVgap(5);
+        // make grid lines visible
+        gpane.setGridLinesVisible(true);
+        // set V and H gaps 
+        gpane.setVgap(5); 
         gpane.setHgap(5);
 
         gpane.setAlignment(Pos.CENTER);
@@ -78,24 +86,37 @@ public class Main extends Application{
         // creating arrayList from text file. 
         ArrayList<Block> blocks;
         try {
-            blocks =  readFile(1);
+            blocks =  readFile(level);
 
         } catch (Exception e) {
             System.out.print(e.toString());
             blocks = new ArrayList<>();
         }
 
-        // adding image nodes to gpane by position property
+        // create event handler
+        
+
+        // add image nodes to gpane by position property
         for(int i = 0; i < blocks.size(); i++){
             Block block = blocks.get(i);
             if(block.getImg() != null){
                 ImageView image = new ImageView(block.getImg());
+                image.setOnDragDetected(new EventHandler<MouseEvent>(){
+                    public void handle(MouseEvent e){
+                        System.out.println(image.getImage().getUrl());
+                    }
+                });
+                image.setOnMouseEntered(new EventHandler<MouseEvent>(){
+                    public void handle(MouseEvent e){
+                        System.out.println(image.getImage().getUrl());
+                    }
+                });
                 gpane.add(image, block.getColumn(), block.getRow());
             }
-
         }
 
-        Scene scene = new Scene(gpane,1920,1080);
+        System.out.println(gpane.getChildren().get(1));
+        Scene scene = new Scene(gpane);
         primaryStage.setScene(scene);
 
         primaryStage.setTitle("this is a title");
@@ -107,7 +128,7 @@ public class Main extends Application{
         ArrayList<Block> arrayList= new ArrayList<>();
         
         // reading file
-        java.io.File file= new java.io.File("src/levels/level"+level +".txt");
+        File file= new File("src/levels/level"+level +".txt");
         Scanner input = new Scanner(file);
 
         // creating objects according to level(contains 16(4x4) blocks) file and add it to arrayList
