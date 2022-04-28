@@ -13,10 +13,6 @@ public class Management{
 
     Management(){}
 
-    public void main(String[] args){
-        Main main = new Main();
-    }
-
     public void prime(){
         this.level = 1;
         try {
@@ -30,7 +26,8 @@ public class Management{
 
     public boolean switchBlocks(){
         // check the blocks whether is movable and convetion to switch
-        if(firstBlock.isMovable() && secondBlock.isMovable()){
+        if (firstBlock.isMovable() && secondBlock.isMovable() && 
+        (secondBlock.getType() + secondBlock.getProperty()).equals("emptyFree")){
 
             // check whether first block is next to second block
             // burası düzgün işlemiyor
