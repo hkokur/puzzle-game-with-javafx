@@ -30,7 +30,6 @@ public class Management{
         (secondBlock.getType() + secondBlock.getProperty()).equals("emptyFree")){
 
             // check whether first block is next to second block
-            // burası düzgün işlemiyor
             int sumFirst = firstBlock.getColumn() + firstBlock.getRow();
             int sumSecond = secondBlock.getColumn() + secondBlock.getRow();
             if ( (sumFirst ==  sumSecond + 1) || (sumFirst == sumSecond -1)){
@@ -44,8 +43,6 @@ public class Management{
                 secondBlock.setColumn(temp.getColumn());
                 secondBlock.setRow(temp.getRow());
 
-                blocks.set(blocks.indexOf(firstBlock), firstBlock);
-                blocks.set(blocks.indexOf(secondBlock), secondBlock);
                 firstBlock = null;
                 return true;
             }

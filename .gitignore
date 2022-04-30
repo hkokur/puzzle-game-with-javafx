@@ -32,3 +32,4 @@ myToken.txt
 bin/
 bin/*/
 src/backup/*
+images/*
