@@ -11,15 +11,19 @@ import javafx.collections.ObservableList;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
+import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
+import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.SpinnerValueFactory.DoubleSpinnerValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
@@ -83,14 +87,16 @@ public class Main extends Application{
 
         GridPane gpane = new GridPane();
         // make grid lines visible
-        gpane.setGridLinesVisible(true);
+        // gpane.setGridLinesVisible(true);
         // set V and H gaps 
-        gpane.setVgap(5); 
-        gpane.setHgap(5);
+        // gpane.setVgap(5); 
+        // gpane.setHgap(5);
 
         gpane.setAlignment(Pos.CENTER);
         
         gpane.setStyle("-fx-background-image: url('background/background.jpg')");
+
+        Pane pane = new Pane();
     
         // add image nodes to gpane by position property
         for(int i = 0; i < blocks.size(); i++){
@@ -111,199 +117,219 @@ public class Main extends Application{
                 }
             });
             gpane.add(image, block.getColumn(), block.getRow());
+            image.setX(block.getColumn()*150);
+            image.setLayoutY(block.getRow()*150); 
+            pane.getChildren().add(image);
         }
-
-        System.out.println(gpane.getChildren().get(1).getLayoutBounds());
         
         Button btn = new Button("Start Animation");
-        gpane.add(btn, 5, 5);
+        gpane.add(btn, 3, 0);
+        btn.setLayoutX(450);
+
 
         ImageView ball = new ImageView("images/ball.png");
-        ball.setFitHeight(20);
-        ball.setFitWidth(20);
+        ball.setFitHeight(25);
+        ball.setFitWidth(25);
+        ball.setLayoutX(65);
+        ball.setLayoutY(65);
 
-        SequentialTransition seq;
         gpane.add(ball,0,0);
-        btn.setOnMouseClicked(e -> {
-            animation(152.5, 152.5,ball);
-        });
 
-        Scene scene = new Scene(gpane);
+        pane.getChildren().add(btn);
+        pane.getChildren().add(ball);
+        Scene scene = new Scene(pane);
         primaryStage.setScene(scene);
         primaryStage.setTitle("this is a title");
         primaryStage.show(); 
 
+        btn.setOnMouseClicked(e -> {
+            animation(150, 150,ball);
+        });
+    }
 
-
+    public Double pointConverter(double point){
+        // we can reach the nodeInParent coordinate easly because shape is a square and ball position same for x and y(65,65)
+        Double exactPoint = point - 10 - 65;
+        return exactPoint;    
     }
 
     public void animation(double width, double height,ImageView image){
-
         Block[] blocks = new Block[3];
         findNextBlock(blocks);
 
-        // the status of animation done or not
-        boolean done = false;
-
         SequentialTransition seq = new SequentialTransition();
+        seq.setAutoReverse(true);
+        seq.setCycleCount(SequentialTransition.INDEFINITE);
 
         // use to set the position of animation
         double relativeCenterX = width/2;
         double relativeCenterY = height/2;
 
-        while(!done){
+        while(true){
             // create animation for starter and end pipe.
-            if(blocks[0].getType().equals("starter") || blocks[2].getType().equals("end")){
-                Block block;
+            if(blocks[0].getType().equals("starter")){
+                Block block = blocks[0];
                 TranslateTransition tt = new TranslateTransition(Duration.seconds(1), image);
-
-                if ( blocks[0].getType().equals("starter")){
-                    block = blocks[0];
-                    tt.setInterpolator(Interpolator.EASE_IN);
-                }
-                else{
-                    done = true;
-                    block = blocks[2];
-                    tt.setInterpolator(Interpolator.EASE_OUT);
-                }
-
+                tt.setInterpolator(Interpolator.EASE_IN);
                 double x = width * block.getColumn();
                 double y = height * block.getRow();
 
                 if(block.getProperty().equals("Vertical")){
-                    tt.setFromX(x + relativeCenterX);
-                    tt.setFromY(y + relativeCenterY);
-                    tt.setByX(0);
-                    tt.setByY(relativeCenterY);
+                    tt.setFromX(pointConverter(x + relativeCenterX));
+                    tt.setToX(pointConverter(x + relativeCenterX));
+                    tt.setFromY(pointConverter(y + relativeCenterY));
+                    tt.setToY(pointConverter(y + relativeCenterY*2));
                 }
                 else{
-                    tt.setFromX(x);
-                    tt.setFromY(y + relativeCenterY);
-                    tt.setToX(x + relativeCenterX);
-                    tt.setFromY(y + relativeCenterY);
+                    tt.setFromX(pointConverter(x + relativeCenterX));
+                    tt.setToX(pointConverter(x + relativeCenterX*2));
+                    tt.setFromY(pointConverter(y + relativeCenterY));
+                    tt.setToY(pointConverter(y + relativeCenterY));
                 }
                 seq.getChildren().add(tt);
             }
-            else{
-                Block block = blocks[1];
+            
+            Block block = blocks[1];
+            double x = width * block.getColumn();
+            double y = height * block.getRow();
+            // create animation by pipe properties
+            if (block.getProperty().equals("Vertical")){
+                TranslateTransition tt = new TranslateTransition(Duration.seconds(1), image);
+                tt.setInterpolator(Interpolator.LINEAR);
+                tt.setFromX(pointConverter(x + relativeCenterX));
+                tt.setToX(pointConverter(x + relativeCenterX));
+                if ( blocks[1].getRow() > blocks[0].getRow() ){
+                    tt.setFromY(pointConverter(y));
+                    tt.setToY(pointConverter(y + relativeCenterY*2));
+                }
+                else{
+                    tt.setFromY(pointConverter(y + relativeCenterY*2));
+                    tt.setToY(pointConverter(y));
+                }
+                seq.getChildren().add(tt);
+            }
+            else if(block.getProperty().equals("Horizontal")){
+                TranslateTransition tt = new TranslateTransition(Duration.seconds(1), image);
+                tt.setInterpolator(Interpolator.LINEAR);
+                tt.setFromY(pointConverter(y + relativeCenterY));
+                tt.setFromY(pointConverter(y + relativeCenterY));
+                if ( blocks[1].getColumn() > blocks[0].getColumn() ){
+                    tt.setFromX(pointConverter(x));
+                    tt.setToX(pointConverter(x+ relativeCenterX*2));
+                }
+                else{
+                    tt.setFromX(pointConverter(x+ relativeCenterX*2));
+                    tt.setToX(pointConverter(x));
+                }
+                seq.getChildren().add(tt);
+            }
+            else if( block.getProperty().equals("00") ){
+                if ( blocks[0].getRow() == blocks[1].getRow() ){
+                    Arc arc = new Arc(pointConverter(x) , pointConverter(y) , relativeCenterX, relativeCenterY, 270, 90);
+                    arc.setType(ArcType.OPEN);
+                    PathTransition pt = new PathTransition(Duration.seconds(1), arc, image);
+                    pt.setOrientation(PathTransition.OrientationType.ORTHOGONAL_TO_TANGENT);
+                    pt.setInterpolator(Interpolator.LINEAR);
+                    seq.getChildren().add(pt);
+                }
+                else{
+                    // burası çalışmayabilir. Arc olarak aynı şeyi oluşturuyor sonuçta. 
+                    Arc arc = new Arc(x , y , relativeCenterX, relativeCenterY, 0, -90);
+                    arc.setType(ArcType.OPEN);
+                    PathTransition pt = new PathTransition(Duration.seconds(1), arc, image);
+                    pt.setOrientation(PathTransition.OrientationType.ORTHOGONAL_TO_TANGENT);
+                    pt.setInterpolator(Interpolator.LINEAR);
+                    seq.getChildren().add(pt);
+                }
+            }
+            else if(block.getProperty().equals("01")){
+                if ( blocks[0].getColumn() == blocks[1].getColumn() ){
+                    Arc arc = new Arc(pointConverter(x + relativeCenterX*2), pointConverter(y) , relativeCenterX , relativeCenterY, 180, 90);
+                    arc.setType(ArcType.OPEN);
+                    PathTransition pt = new PathTransition(Duration.seconds(0.5), arc, image);
+                    pt.setInterpolator(Interpolator.LINEAR);
+                    seq.getChildren().add(pt);
+                }
+                else{
+                    // burası çalışmayabilir. Arc olarak aynı şeyi oluşturuyor sonuçta. 
+                    Arc arc = new Arc(pointConverter(x) + pointConverter(relativeCenterX*2), pointConverter(y) , relativeCenterX, relativeCenterY, -90, -90);
+                    arc.setType(ArcType.OPEN);
+                    PathTransition pt = new PathTransition(Duration.seconds(1), arc, image);
+                    pt.setOrientation(PathTransition.OrientationType.ORTHOGONAL_TO_TANGENT);
+                    pt.setInterpolator(Interpolator.LINEAR);
+                    seq.getChildren().add(pt);
+                }
+            }
+            else if(block.getProperty().equals("10")){
+                if ( blocks[0].getColumn() == blocks[1].getColumn() ){
+                    Arc arc = new Arc(x , y + relativeCenterY*2,  relativeCenterX, relativeCenterY, 0, 90);
+                    arc.setType(ArcType.OPEN);
+                    PathTransition pt = new PathTransition(Duration.seconds(1), arc, image);
+                    pt.setOrientation(PathTransition.OrientationType.ORTHOGONAL_TO_TANGENT);
+                    pt.setInterpolator(Interpolator.LINEAR);
+                    seq.getChildren().add(pt);
+                }
+                else{
+                    // burası çalışmayabilir. Arc olarak aynı şeyi oluşturuyor sonuçta. 
+                    Arc arc = new Arc(x , y + relativeCenterY*2 , relativeCenterX, relativeCenterY, -270, -90);
+                    arc.setType(ArcType.OPEN);
+                    PathTransition pt = new PathTransition(Duration.seconds(1), arc, image);
+                    pt.setOrientation(PathTransition.OrientationType.ORTHOGONAL_TO_TANGENT);
+                    pt.setInterpolator(Interpolator.LINEAR);
+                    seq.getChildren().add(pt);
+                }
+            }
+            else if(block.getProperty().equals("11")){
+                if ( blocks[0].getColumn() == blocks[1].getColumn() ){
+                    Arc arc = new Arc(x + relativeCenterX*2 , y + relativeCenterY*2,  relativeCenterX, relativeCenterY, 90, 90);
+                    arc.setType(ArcType.OPEN);
+                    PathTransition pt = new PathTransition(Duration.seconds(1), arc, image);
+                    pt.setOrientation(PathTransition.OrientationType.ORTHOGONAL_TO_TANGENT);
+                    pt.setInterpolator(Interpolator.LINEAR);
+                    seq.getChildren().add(pt);
+                }
+                else{
+                    // burası çalışmayabilir. Arc olarak aynı şeyi oluşturuyor sonuçta. 
+                    Arc arc = new Arc(x + relativeCenterX*2 , y + relativeCenterY*2 , relativeCenterX, relativeCenterY, -180, -90);
+                    arc.setType(ArcType.OPEN);
+                    PathTransition pt = new PathTransition(Duration.seconds(1), arc, image);
+                    pt.setOrientation(PathTransition.OrientationType.ORTHOGONAL_TO_TANGENT);
+                    pt.setInterpolator(Interpolator.LINEAR);
+                    seq.getChildren().add(pt);
+                }
+            }
 
-                double x = width * block.getColumn();
-                double y = height * block.getRow();
+            if (blocks[2].getType().equals("end")){
+                block = blocks[2];
+                TranslateTransition tt = new TranslateTransition(Duration.seconds(1), image);
+                tt.setInterpolator(Interpolator.EASE_OUT);
 
-                // create animation by pipe properties
-                if (block.getProperty().equals("Vertical")){
-                    TranslateTransition tt = new TranslateTransition(Duration.seconds(1), image);
-                    tt.setInterpolator(Interpolator.LINEAR);
-                    tt.setFromX(x + relativeCenterX/2);
-                    tt.setToX(x + relativeCenterX/2);
-                    if ( blocks[1].getRow() > blocks[0].getRow() ){
-                        tt.setFromY(y);
-                        tt.setToY(y + relativeCenterY*2);
-                    }
-                    else{
-                        tt.setFromY(y + relativeCenterY*2);
-                        tt.setToY(y);
-                    }
-                    seq.getChildren().add(tt);
+                x = width * block.getColumn();
+                y = height * block.getRow();
+
+                if(block.getProperty().equals("Vertical")){
+                    tt.setFromX(pointConverter(x + relativeCenterX));
+                    tt.setToX(pointConverter(x + relativeCenterX));
+                    tt.setFromY(pointConverter(y + relativeCenterY));
+                    tt.setToY(pointConverter(y + relativeCenterY*2));
                 }
-                else if(block.getProperty().equals("Horizontal")){
-                    TranslateTransition tt = new TranslateTransition(Duration.seconds(1), image);
-                    tt.setInterpolator(Interpolator.LINEAR);
-                    tt.setFromY(y + relativeCenterY);
-                    tt.setFromY(y + relativeCenterY);
-                    if ( blocks[1].getColumn() > blocks[0].getColumn() ){
-                        tt.setFromX(x);
-                        tt.setToX(x+ relativeCenterX*2);
-                    }
-                    else{
-                        tt.setFromX(x+ relativeCenterX*2);
-                        tt.setToX(x);
-                    }
-                    seq.getChildren().add(tt);
+                else{
+                    tt.setFromX(pointConverter(x));
+                    tt.setToX(pointConverter(x + relativeCenterX));
+                    tt.setFromY(pointConverter(y + relativeCenterY));
+                    tt.setToY(pointConverter(y + relativeCenterY));
                 }
-                else if( block.getProperty().equals("00") ){
-                    if ( blocks[0].getRow() == blocks[1].getRow() ){
-                        Arc arc = new Arc(x , y , relativeCenterX, relativeCenterY, 270, 360);
-                        arc.setType(ArcType.OPEN);
-                        PathTransition pt = new PathTransition(Duration.seconds(1), arc, image);
-                        pt.setOrientation(PathTransition.OrientationType.ORTHOGONAL_TO_TANGENT);
-                        pt.setInterpolator(Interpolator.LINEAR);
-                        seq.getChildren().add(pt);
-                    }
-                    else{
-                        // burası çalışmayabilir. Arc olarak aynı şeyi oluşturuyor sonuçta. 
-                        Arc arc = new Arc(x , y , relativeCenterX, relativeCenterY, 0, -90);
-                        arc.setType(ArcType.OPEN);
-                        PathTransition pt = new PathTransition(Duration.seconds(1), arc, image);
-                        pt.setOrientation(PathTransition.OrientationType.ORTHOGONAL_TO_TANGENT);
-                        pt.setInterpolator(Interpolator.LINEAR);
-                        seq.getChildren().add(pt);
-                    }
-                }
-                else if(block.getProperty().equals("01")){
-                    if ( blocks[0].getColumn() == blocks[1].getColumn() ){
-                        Arc arc = new Arc(x + relativeCenterX*2, y , relativeCenterX, relativeCenterY, 180, 270);
-                        arc.setType(ArcType.OPEN);
-                        PathTransition pt = new PathTransition(Duration.seconds(1), arc, image);
-                        pt.setOrientation(PathTransition.OrientationType.ORTHOGONAL_TO_TANGENT);
-                        pt.setInterpolator(Interpolator.LINEAR);
-                        seq.getChildren().add(pt);
-                    }
-                    else{
-                        // burası çalışmayabilir. Arc olarak aynı şeyi oluşturuyor sonuçta. 
-                        Arc arc = new Arc(x + relativeCenterX*2 , y , relativeCenterX, relativeCenterY, -90, -180);
-                        arc.setType(ArcType.OPEN);
-                        PathTransition pt = new PathTransition(Duration.seconds(1), arc, image);
-                        pt.setOrientation(PathTransition.OrientationType.ORTHOGONAL_TO_TANGENT);
-                        pt.setInterpolator(Interpolator.LINEAR);
-                        seq.getChildren().add(pt);
-                    }
-                }
-                else if(block.getProperty().equals("10")){
-                    if ( blocks[0].getColumn() == blocks[1].getColumn() ){
-                        Arc arc = new Arc(x , y + relativeCenterY*2,  relativeCenterX, relativeCenterY, 0, 90);
-                        arc.setType(ArcType.OPEN);
-                        PathTransition pt = new PathTransition(Duration.seconds(1), arc, image);
-                        pt.setOrientation(PathTransition.OrientationType.ORTHOGONAL_TO_TANGENT);
-                        pt.setInterpolator(Interpolator.LINEAR);
-                        seq.getChildren().add(pt);
-                    }
-                    else{
-                        // burası çalışmayabilir. Arc olarak aynı şeyi oluşturuyor sonuçta. 
-                        Arc arc = new Arc(x , y + relativeCenterY*2 , relativeCenterX, relativeCenterY, -270, 0);
-                        arc.setType(ArcType.OPEN);
-                        PathTransition pt = new PathTransition(Duration.seconds(1), arc, image);
-                        pt.setOrientation(PathTransition.OrientationType.ORTHOGONAL_TO_TANGENT);
-                        pt.setInterpolator(Interpolator.LINEAR);
-                        seq.getChildren().add(pt);
-                    }
-                }
-                else if(block.getProperty().equals("11")){
-                    if ( blocks[0].getColumn() == blocks[1].getColumn() ){
-                        Arc arc = new Arc(x + relativeCenterX*2 , y + relativeCenterY*2,  relativeCenterX, relativeCenterY, 90, 180);
-                        arc.setType(ArcType.OPEN);
-                        PathTransition pt = new PathTransition(Duration.seconds(1), arc, image);
-                        pt.setOrientation(PathTransition.OrientationType.ORTHOGONAL_TO_TANGENT);
-                        pt.setInterpolator(Interpolator.LINEAR);
-                        seq.getChildren().add(pt);
-                    }
-                    else{
-                        // burası çalışmayabilir. Arc olarak aynı şeyi oluşturuyor sonuçta. 
-                        Arc arc = new Arc(x + relativeCenterX*2 , y + relativeCenterY*2 , relativeCenterX, relativeCenterY, -180, -90);
-                        arc.setType(ArcType.OPEN);
-                        PathTransition pt = new PathTransition(Duration.seconds(1), arc, image);
-                        pt.setOrientation(PathTransition.OrientationType.ORTHOGONAL_TO_TANGENT);
-                        pt.setInterpolator(Interpolator.LINEAR);
-                        seq.getChildren().add(pt);
-                    }
-                }
+                seq.getChildren().add(tt);
+                break;
             }
             findNextBlock(blocks);
         }
         seq.play();
     }
 
+
     public void findNextBlock(Block[] blocks){
+
         Block block0 = blocks[0];
         Block block1 = blocks[1];
         Block block2 = blocks[2];
@@ -333,6 +359,9 @@ public class Main extends Application{
         else{
             blocks[0] = block1;
             blocks[1] = block2;
+            block0 = block1;
+            block1 = block2;
+
         }
 
         // assign block2 acording to block1
@@ -372,7 +401,6 @@ public class Main extends Application{
             else
                 block2 = findBlockByCoordinate(block0.getColumn() - 1, block0.getRow() + 1);
         }
-
 
         // update blocks with new blocks
         blocks[2] = block2;
