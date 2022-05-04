@@ -33,3 +33,6 @@ bin/
 bin/*/
 src/backup/*
 images/*
+
+# Files
+/src/backup.md
