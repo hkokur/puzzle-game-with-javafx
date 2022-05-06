@@ -84,6 +84,11 @@ public class CheckPath {
                 isRight = true;
                 j = checkHorizontal(blocks, j, isRight, isDown);
             }
+            else if(blocks.get(j).getProperty().equals("10") && isDown) {
+                j = j - 1;
+                isRight = true;
+                j = checkHorizontal(blocks, j, isRight, isDown);
+            }
             else {
                 return j;
             }
@@ -117,6 +122,10 @@ public class CheckPath {
             }
             else if(blocks.get(j).getProperty().equals("01") && !isRight) {
                 j = j - 4;
+                j = checkVertical(blocks, j, isRight, isDown);
+            }
+            else if(blocks.get(j).getProperty().equals("00") && isRight) {
+                j = j -4;
                 j = checkVertical(blocks, j, isRight, isDown);
             }
             else {

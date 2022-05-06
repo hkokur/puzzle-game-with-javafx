@@ -37,7 +37,7 @@ public class Management{
 
 
     public void prime(){
-        this.level = 3;
+        this.level = 8;
         try {
             blocks =  readFile();
         } catch (Exception e) {
