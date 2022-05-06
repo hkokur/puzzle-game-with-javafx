@@ -7,7 +7,7 @@ import java.util.Collections;
 
 public class Management{
     private ArrayList<Block> blocks;
-    private int level;
+    private int level = 1;
 
     // preserve the blocks to switch each other.
     private Block firstBlock;
@@ -15,8 +15,8 @@ public class Management{
 
     Management(){}
 
-    public void setLevel(int level){
-        this.level = level;
+    public void setLevel(){
+        this.level++;
     }
 
     public void setFirstBlock(Block firstBlock){
@@ -37,7 +37,6 @@ public class Management{
 
 
     public void prime(){
-        this.level = 8;
         try {
             blocks =  readFile();
         } catch (Exception e) {
