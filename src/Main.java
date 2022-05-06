@@ -24,6 +24,7 @@ import javafx.scene.input.DragEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.*;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
@@ -115,9 +116,13 @@ public class Main extends Application{
             image.setLayoutY(block.getRow()*150); 
             pane.getChildren().add(image);
         }
-        
-        // Button btn = new Button("Start Animation");
-        // btn.setLayoutX(450);
+
+        pane.setStyle("-fx-background-image: url('background/background.jpg')");
+
+        ImageView btnImg = new ImageView(new Image("images/next.png"));
+        Button btn = new Button("");
+        btn.setGraphic(btnImg);
+        btn.setLayoutX(450);
 
         ImageView ball = new ImageView("images/ball.png");
         ball.setFitHeight(25);
@@ -137,7 +142,6 @@ public class Main extends Application{
         ball.setLayoutX(x + 65);
         ball.setLayoutY(y + 65);
 
-        // pane.getChildren().add(btn);
         pane.getChildren().add(ball);
 
         Scene scene = new Scene(pane);
@@ -146,9 +150,16 @@ public class Main extends Application{
         primaryStage.show(); 
 
         if(path.checkPath(blocks)) {
+            pane.getChildren().add(btn);
             PathTransition pt = animation(ball, 150, 150);
             pt.play();
         }
+        btn.setOnMouseClicked(e -> {
+            management.setLevel();
+            management.prime();
+            game(primaryStage);
+        });
+
         
     }
 
