@@ -71,6 +71,12 @@ public class Main extends Application{
     	mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
         mediaPlayer.seek(Duration.ZERO);
 
+        Button muteBtn = new Button("Mute");
+
+        muteBtn.setOnMouseClicked(e -> {
+            mediaPlayer.stop();
+        });
+
 
 		startPane.setOnMouseClicked(e ->  {
             management.prime();
@@ -82,6 +88,7 @@ public class Main extends Application{
         });
 		
 		startPane.getChildren().add(startgif);
+        startPane.getChildren().add(muteBtn);
 
 		Scene scene = new Scene(startPane,1000,562);
 		stage.setTitle("start");
