@@ -48,7 +48,7 @@ import java.io.File;
 public class Main extends Application{
     // class to manage levels and drag events
     private Management management = new Management();
-
+    private CheckPath path = new CheckPath();
     public static void main(String[] args) {
         // Launch the JavaFX application
         Application.launch(args);
@@ -116,8 +116,8 @@ public class Main extends Application{
             pane.getChildren().add(image);
         }
         
-        Button btn = new Button("Start Animation");
-        btn.setLayoutX(450);
+        // Button btn = new Button("Start Animation");
+        // btn.setLayoutX(450);
 
         ImageView ball = new ImageView("images/ball.png");
         ball.setFitHeight(25);
@@ -137,7 +137,7 @@ public class Main extends Application{
         ball.setLayoutX(x + 65);
         ball.setLayoutY(y + 65);
 
-        pane.getChildren().add(btn);
+        // pane.getChildren().add(btn);
         pane.getChildren().add(ball);
 
         Scene scene = new Scene(pane);
@@ -145,10 +145,11 @@ public class Main extends Application{
         primaryStage.setTitle("this is a title");
         primaryStage.show(); 
 
-        btn.setOnMouseClicked(e -> {
+        if(path.checkPath(blocks)) {
             PathTransition pt = animation(ball, 150, 150);
             pt.play();
-        });
+        }
+        
     }
 
     public PathTransition animation(Node ball,double width, double height){ 

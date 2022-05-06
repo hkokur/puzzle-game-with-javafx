@@ -2,6 +2,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.Collections;
+
 
 public class Management{
     private ArrayList<Block> blocks;
@@ -35,7 +37,7 @@ public class Management{
 
 
     public void prime(){
-        this.level = 6;
+        this.level = 3;
         try {
             blocks =  readFile();
         } catch (Exception e) {
@@ -63,6 +65,8 @@ public class Management{
                 firstBlock.setRow(secondBlock.getRow());
                 secondBlock.setColumn(temp.getColumn());
                 secondBlock.setRow(temp.getRow());
+
+                Collections.swap(blocks, blocks.indexOf(firstBlock), blocks.indexOf(secondBlock));
 
                 firstBlock = null;
                 return true;
