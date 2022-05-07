@@ -1,4 +1,5 @@
 import java.io.FileNotFoundException;
+import java.net.PasswordAuthentication;
 import java.util.ArrayList;
 
 import javafx.animation.Interpolator;
@@ -11,6 +12,7 @@ import javafx.collections.ObservableList;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
+import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
@@ -100,7 +102,7 @@ public class Main extends Application{
         ArrayList<Block> blocks = management.getBlocks();
 
         Pane pane = new Pane();
-    
+
         // add image nodes to gpane by position property
         for(int i = 0; i < blocks.size(); i++){
             Block block = blocks.get(i);
@@ -123,12 +125,11 @@ public class Main extends Application{
             image.setLayoutY(block.getRow()*150); 
             pane.getChildren().add(image);
         }
-
-        pane.setStyle("-fx-background-image: url('background/background.jpg')");
+        pane.setPrefSize(600, 600);
 
         ImageView btnImg = new ImageView(new Image("images/next.png"));
-        Button btn = new Button("");
-        btn.setGraphic(btnImg);
+        Button btn = new Button("Next Level");
+        //btn.setGraphic(btnImg);
         btn.setLayoutX(450);
 
         ImageView ball = new ImageView("images/ball.png");
@@ -151,10 +152,19 @@ public class Main extends Application{
 
         pane.getChildren().add(ball);
 
-        Scene scene = new Scene(pane);
+        HBox hBox = new HBox();
+
+
+        Scene scene = new Scene(hBox);
         primaryStage.setScene(scene);
         primaryStage.setTitle("this is a title");
+        //primaryStage.setFullScreen(true);
         primaryStage.show(); 
+
+        // set pane aligment
+        HBox.setMargin(pane,new Insets((primaryStage.getHeight()-600)/2,(primaryStage.getWidth()-600)/2, (primaryStage.getHeight()-600)/2, (primaryStage.getWidth()-600)/2));
+        hBox.getChildren().addAll(pane);
+        hBox.setStyle("-fx-background-image: url('background/background.jpg');");
 
         if(path.checkPath(blocks)) {
             pane.getChildren().add(btn);
