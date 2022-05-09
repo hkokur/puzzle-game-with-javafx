@@ -162,7 +162,7 @@ public class Main extends Application{
         hBox.setStyle("-fx-background-image: url('background/background.jpg');");
 
         primaryStage.setScene(scene);
-        primaryStage.setTitle("this is a title");
+        primaryStage.setTitle("game");
         primaryStage.show(); 
 
         if(management.checkPath(blocks)) {
