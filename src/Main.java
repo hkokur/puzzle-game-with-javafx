@@ -51,7 +51,6 @@ import java.io.File;
 public class Main extends Application{
     // class to manage levels and drag events
     private Management management = new Management();
-    private CheckPath path = new CheckPath();
     public static void main(String[] args) {
         // Launch the JavaFX application
         Application.launch(args);
@@ -74,6 +73,7 @@ public class Main extends Application{
         mediaPlayer.seek(Duration.ZERO);
 
         Button muteBtn = new Button("Mute");
+        muteBtn.setStyle("-fx-background-color: #541657; -fx-background-insets: 0,1,2,3; -fx-background-radius: 3,2,2,2; -fx-padding: 12 30 12 30; -fx-text-fill: white; -fx-font-size: 12px;");
 
         muteBtn.setOnMouseClicked(e -> {
             mediaPlayer.stop();
@@ -127,9 +127,8 @@ public class Main extends Application{
         }
         pane.setPrefSize(600, 600);
 
-        ImageView btnImg = new ImageView(new Image("images/next.png"));
         Button btn = new Button("Next Level");
-        //btn.setGraphic(btnImg);
+        btn.setStyle("-fx-background-color: #541657; -fx-background-insets: 0,1,2,3; -fx-background-radius: 3,2,2,2; -fx-padding: 12 30 12 30; -fx-text-fill: white; -fx-font-size: 12px;");
         btn.setLayoutX(450);
 
         ImageView ball = new ImageView("images/ball.png");
@@ -154,19 +153,19 @@ public class Main extends Application{
 
         HBox hBox = new HBox();
 
-
         Scene scene = new Scene(hBox);
-        primaryStage.setScene(scene);
-        primaryStage.setTitle("this is a title");
-        //primaryStage.setFullScreen(true);
-        primaryStage.show(); 
 
         // set pane aligment
         HBox.setMargin(pane,new Insets((primaryStage.getHeight()-600)/2,(primaryStage.getWidth()-600)/2, (primaryStage.getHeight()-600)/2, (primaryStage.getWidth()-600)/2));
         hBox.getChildren().addAll(pane);
+
         hBox.setStyle("-fx-background-image: url('background/background.jpg');");
 
-        if(path.checkPath(blocks)) {
+        primaryStage.setScene(scene);
+        primaryStage.setTitle("this is a title");
+        primaryStage.show(); 
+
+        if(management.checkPath(blocks)) {
             pane.getChildren().add(btn);
             PathTransition pt = animation(ball, 150, 150);
             pt.play();
