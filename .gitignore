@@ -29,8 +29,6 @@ myToken.txt
 .vscode/
 
 # Folders
-bin/
-bin/*/
 src/backup/*
 images/*
 

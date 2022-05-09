@@ -1,49 +1,27 @@
-import java.io.FileNotFoundException;
-import java.net.PasswordAuthentication;
 import java.util.ArrayList;
 
-import javafx.animation.Interpolator;
 import javafx.animation.PathTransition;
-import javafx.animation.SequentialTransition;
-import javafx.animation.TranslateTransition;
 import javafx.application.Application;
-import javafx.beans.property.ReadOnlyObjectProperty;
-import javafx.collections.ObservableList;
-import javafx.event.Event;
 import javafx.event.EventHandler;
-import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
-import javafx.geometry.Point2D;
-import javafx.geometry.Pos;
-import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.SpinnerValueFactory.DoubleSpinnerValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.DragEvent;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.*;
 import javafx.scene.layout.StackPane;
-import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import java.util.Scanner;
-import javax.swing.text.Position;
 
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
-import javafx.scene.shape.Arc;
 import javafx.scene.shape.ArcTo;
-import javafx.scene.shape.ArcType;
-import javafx.scene.shape.ClosePath;
 import javafx.scene.shape.HLineTo;
 import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.VLineTo;
 
 import java.io.File;
@@ -129,7 +107,8 @@ public class Main extends Application{
 
         Button btn = new Button("Next Level");
         btn.setStyle("-fx-background-color: #541657; -fx-background-insets: 0,1,2,3; -fx-background-radius: 3,2,2,2; -fx-padding: 12 30 12 30; -fx-text-fill: white; -fx-font-size: 12px;");
-        btn.setLayoutX(450);
+        btn.setLayoutX(250);
+        btn.setLayoutY(650);
 
         ImageView ball = new ImageView("images/ball.png");
         ball.setFitHeight(25);
