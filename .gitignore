@@ -1,5 +1,5 @@
 # Compiled class file
-#*.class
+*.class
 
 # Log file
 *.log
@@ -29,6 +29,8 @@ myToken.txt
 .vscode/
 
 # Folders
+bin/
+bin/*/
 src/backup/*
 images/*
 
