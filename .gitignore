@@ -22,18 +22,9 @@
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 
-#Token
-myToken.txt
 
 #vscode
 .vscode/
 
 # Folders
-bin/
-bin/*/
-src/backup/*
-images/*
-
-# Files
-/src/backup.md
-/bin/backup.md
+bin/*

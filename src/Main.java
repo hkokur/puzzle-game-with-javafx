@@ -42,33 +42,13 @@ public class Main extends Application{
 		
 		startgif.fitHeightProperty().bind(startPane.heightProperty());
     	startgif.fitWidthProperty().bind(startPane.widthProperty());
-    	
-    	String musicFile= "src/music/music.mp3";
-    	Media music = new Media(new File(musicFile).toURI().toString());
-    	MediaPlayer mediaPlayer = new MediaPlayer(music);
-    	mediaPlayer.play();
-    	mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
-        mediaPlayer.seek(Duration.ZERO);
-
-        Button muteBtn = new Button("Mute");
-        muteBtn.setStyle("-fx-background-color: #541657; -fx-background-insets: 0,1,2,3; -fx-background-radius: 3,2,2,2; -fx-padding: 12 30 12 30; -fx-text-fill: white; -fx-font-size: 12px;");
-
-        muteBtn.setOnMouseClicked(e -> {
-            mediaPlayer.stop();
-        });
-
 
 		startPane.setOnMouseClicked(e ->  {
             management.prime();
             game(stage);
 		});
-
-        stage.setOnCloseRequest(windowEvent -> {
-            mediaPlayer.stop();
-        });
 		
 		startPane.getChildren().add(startgif);
-        startPane.getChildren().add(muteBtn);
 
 		Scene scene = new Scene(startPane,1000,562);
 		stage.setTitle("start");
